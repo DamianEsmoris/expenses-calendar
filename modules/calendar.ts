@@ -1,4 +1,4 @@
-import {formatDate, getTimezone, getTzid, IcsDateFormat} from './date';
+import { getTimezone, getTzid, IcsDateFormat} from './date';
 
 type STANDARD = {
 	BEGIN: "STANDARD",
@@ -52,20 +52,19 @@ function createCalendarHeader(): VCALENDAR {
 }
 
 function checkHeader(header: VCALENDAR) {
-	// const checks = {};
-	// const tocheck = [header, header.VTIMEZONE, header.VTIMEZONE.STANDARD];
-	// const objs = [VCALENDAR, VTIMEZONE, STANDARD];
-	
-	// for (let i=0; i<tocheck.length; i++){
-	// 	if(typeof tocheck[i] != "object") continue; 
-	// 	checks[objs[i]["BEGIN"]] = Object.keys(objs[i]).map(k => k in tocheck[i])
-	// 		.reduce((a,b) => a&&b);
-	// }
+	const checks = {
+		starts: Object.keys(header)[0] === "BEGIN" && header.BEGIN === "VCALENDAR",
+		version: header.VERSION == "2.0" || (!isNaN(header.VERSION) && header.VERSION >= 2.0),
+		prodid: "PRODID" in header,
+	}
 
-	// return checks;
+	// at least i have 3 checks
+
+	return checks;
 }
 
 export {
+	VCALENDAR,
 	createCalendarHeader,
 	checkHeader
 }

@@ -1,4 +1,6 @@
 import { formatDate } from "./date";
+import { VCALENDAR } from "./calendar";
+import { Rrule, VEVENT } from "./event";
 const semicolonProps: readonly string[] = ["DTSTART", "DTEND"];
 
 /**
@@ -7,7 +9,7 @@ const semicolonProps: readonly string[] = ["DTSTART", "DTEND"];
  * @param rrule
  * @returns object parsed into a string
  */
-function parseRrule(rrule){
+function parseRrule(rrule: Rrule){
 	let str = "";
 	for (let [key, value] of Object.entries(rrule)){
 		if (!value) continue;
@@ -23,7 +25,7 @@ function parseRrule(rrule){
  * @param obj
  * @returns object parsed into string formatted for a .ics file
  */
-function parseLoop(obj){
+function parseLoop(obj: Object){
 	if (!obj) return "";
 	let str = "";
 
@@ -41,8 +43,7 @@ function parseLoop(obj){
  * @param body calendar's events
  * @returns final .ics string
  */
-function parseCalendar(header, body) {
-	const d = new Date();
+function parseCalendar(header: VCALENDAR, body: VEVENT[]) {
 	header.VTIMEZONE["LAST-MODIFIED"] = formatDate(new Date())
 	let str = "";
 
@@ -60,9 +61,13 @@ function parseCalendar(header, body) {
  * @param calendar Calendar formatted in a string
  * @returns Calendar closed.
  */
-function closeCalendar(calendar) {
+function closeCalendar(calendar: string) {
 	calendar+="END:VCALENDAR"
 	return calendar;
 }
 
-export { parseCalendar, parseRrule };
+export { 
+	semicolonProps,
+	parseCalendar,
+	parseRrule
+};
