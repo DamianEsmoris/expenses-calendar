@@ -68,7 +68,6 @@ function createRrule(rrule: Rrule){
     if (!("FREQ" in rrule)) throw new RruleError("FREQ param must be present");
 		for (let [key, value] of Object.entries(rrule)){
 			try {
-				console.log(key)
 				RrulePropertyValidation(rrule, key, value)
 			} catch(error) {
 				delete rrule[key];
