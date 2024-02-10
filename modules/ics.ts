@@ -1,19 +1,20 @@
 import * as fs from 'fs';
-import * as fsR from 'fs-reverse';
+import * as rlr from 'reverse-line-reader';
+
 import * as readline from 'readline';
 
-import { createCalendarHeader, checkHeader, VCALENDAR} from './modules/calendar';
-import { createEvent, VEVENT } from './modules/event';
-import { parseCalendar, semicolonProps } from './modules/parser';
-import { insertAnEvent, findAnEvent } from './modules/db/controller'
+import { checkHeader, VCALENDAR} from './calendar';
+import { VEVENT } from './event';
+import { semicolonProps } from './parser';
+import { findAnEvent, insertAnEvent } from './db/controller'
 
 
-function readIcs() {
+function readHeaderIcs(icsFile: string) {
 	return new Promise<VCALENDAR> ((resolve) => {
 		let objs: object[] = [{}], i = 0;
 
 		const lineReader = readline.createInterface({
-				input: fs.createReadStream('output.ics')
+				input: fs.createReadStream(icsFile)
 		});
 			
 		lineReader.on('line', function (line) {
@@ -44,60 +45,67 @@ function readIcs() {
 	})
 }
 
-readIcs().then(header => {
-    const checks = checkHeader(header);
-    if (!Object.values(checks).map((a,b) => a&&b)){
-        console.log(checks)
-        return false
-    }
+async function readIcs(icsFile: string) {
+	const header = await readHeaderIcs(icsFile);
+	const checks = checkHeader(header);
+	if (!Object.values(checks).map((a,b) => a&&b)){
+			console.log(checks)
+			return false
+	}
 
-    console.log('All green!');
-    const readStream = fsR('output.ics');
+	console.log('All green!');
 
-		let events: VEVENT[] = [];
-		let buffer: string[] = [];
-		let calendarCloseTagNotFound = true;
-		let stopReading: boolean;
+	let buffer: string[] = [];
+	let events: VEVENT[] = [];
+	let calendarCloseTagNotFound = true;
 
-    readStream.on('data', (line: string) => {
-			if (calendarCloseTagNotFound){
-				if (line === "END:VCALENDAR") {
-					calendarCloseTagNotFound = false;
-					return;
-				}
+	rlr.eachLine(icsFile, async (line: string) => {
+		if (calendarCloseTagNotFound){
+			if (line === "END:VCALENDAR") {
+				calendarCloseTagNotFound = false;
+				return;
 			}
-			
-			buffer.push(line);
-			stopReading = processBuffer(buffer, events);
-			if (stopReading) {
-				console.log(events)
-			}
-	})
-});
-
-function processBuffer(buffer: string[], events: VEVENT[]) {
-	if (buffer.at(-1) === "BEGIN:VEVENT") {
-		buffer = buffer.reverse();	
-
-		const obj = {};
-		buffer.forEach(s => {
-			let substr = s.split(semicolonProps.find(prop => s.includes(prop)) ? ';' : ':');
-			obj[substr[0]] = substr[1];
-		});
-		
-		
-		let event: VEVENT = <VEVENT>obj
-		let eventExists = findAnEvent(event.UID);
-		if (eventExists) return true; // must be changed to a db check
-
-		while (buffer.length) {
-			buffer.pop();
 		}
+	
+		buffer.push(line);
+		const result = processBuffer(buffer);
+		if (typeof result === "object") {
+			buffer=[];
+			if (await findAnEvent(result.UID)) {
+				return;
+			} else {
+				events.push(result);
+				await insertAnEvent(result);
+			}
+		}
+	})
 
-		events.push(event);
-		return false;
-	} if (buffer.at(-1) === "END:VTIMEZONE") {
-		return true;
+	setTimeout(() => {
+	console.log(events);
+	}, 500);
+
+	// this is ugly but it works.
+	//		maybe i can use a function, or a callback after insert the last event (?
+	//
+	// the 
+}
+
+function processBuffer(buffer: string[]): VEVENT | null | number{
+	if (buffer.at(-1) === "BEGIN:VEVENT") {
+		const event = parseEvent(buffer);
+		return event ? event : null;
 	}
 }
 
+function parseEvent(eventBuffer: string[]): VEVENT {
+    const event: Object = {};
+    for (const line of eventBuffer) {
+        const [key, value] = line.split(semicolonProps.find(prop => line.includes(prop)) ? ';' : ':');
+        event[key] = value;
+    }
+    return <VEVENT>event;
+}
+
+export {
+	readIcs
+}

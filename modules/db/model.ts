@@ -8,14 +8,27 @@ async function insertEvent(event: VEVENT) {
 	try {
 		const collection = db.collection('events');
 		result = await collection.insertOne(event);
-	} catch(err) {
-		console.error(`Error inserting an event: ${err}`)
-	} finally {
-		client.close();
 		return result;
+	} catch(err) {
+		console.error(`Error inserting an event: ${err}`);
+		throw err;
 	}
 }
-	
+
+async function insertEvents(events: VEVENT[]) {
+	const db: any = await connectDb()
+	let result;
+
+	try {
+		const collection = db.collection('events');
+		result = await collection.insertMany(events);
+		return result;
+	} catch(err) {
+		console.error(`Error inserting the events: ${err}`);
+		throw err;
+	}
+}
+
 async function findEvent(id: VEVENT['UID']) {
 	const db: any = await connectDb()
 	let event;
@@ -23,15 +36,24 @@ async function findEvent(id: VEVENT['UID']) {
 	try {
 		const collection = db.collection('events');
 		event = await collection.findOne({ UID: id });
-	} catch(err) {
-		console.error(`Error finding an event: ${err}`)
-	} finally {
-		client.close();
 		return event;
-	}
+	} catch(err) {
+		console.error(`Error finding an event: ${err}`);
+		throw err;
+	}}
+
+async function closeConnection(){
+		try {
+			await client.close();
+		} catch (err) {
+			console.error(`Error closing the connection to the database: ${err}`);
+			throw err;
+		}
 }
 
 export {
+	closeConnection,
 	insertEvent,
+	insertEvents,
 	findEvent,
 }

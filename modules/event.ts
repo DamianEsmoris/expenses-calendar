@@ -75,7 +75,7 @@ function createRrule(rrule: Rrule){
 			}
 		}
 
-		return parseRrule(rrule);
+	return rrule;
 }
 
 function createEvent(e: {summary: string, description: string, startDate: Date, endDate: Date, rrule: Rrule, calendar: VCALENDAR}){

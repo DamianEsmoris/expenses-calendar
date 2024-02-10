@@ -30,6 +30,7 @@ function parseLoop(obj: Object){
 	let str = "";
 
 	for (let [key, value] of Object.entries(obj)) {
+		if (key === "RRULE") value = parseRrule(<Rrule>obj);
 		str += (typeof value === "object") ? parseLoop(value) : key + (semicolonProps.includes(key) ? ";" : ":") + value + "\n";
 	}
 

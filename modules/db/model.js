@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findEvent = exports.insertEvent = void 0;
+exports.findEvent = exports.insertEvents = exports.insertEvent = exports.closeConnection = void 0;
 var connector_1 = require("./connector");
 function insertEvent(event) {
     return __awaiter(this, void 0, void 0, function () {
@@ -48,28 +48,25 @@ function insertEvent(event) {
                     db = _a.sent();
                     _a.label = 2;
                 case 2:
-                    _a.trys.push([2, 4, 5, 6]);
+                    _a.trys.push([2, 4, , 5]);
                     collection = db.collection('events');
                     return [4 /*yield*/, collection.insertOne(event)];
                 case 3:
                     result = _a.sent();
-                    return [3 /*break*/, 6];
+                    return [2 /*return*/, result];
                 case 4:
                     err_1 = _a.sent();
                     console.error("Error inserting an event: ".concat(err_1));
-                    return [3 /*break*/, 6];
-                case 5:
-                    connector_1.client.close();
-                    return [2 /*return*/, result];
-                case 6: return [2 /*return*/];
+                    throw err_1;
+                case 5: return [2 /*return*/];
             }
         });
     });
 }
 exports.insertEvent = insertEvent;
-function findEvent(id) {
+function insertEvents(events) {
     return __awaiter(this, void 0, void 0, function () {
-        var db, event, collection, err_2;
+        var db, result, collection, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, (0, connector_1.connectDb)()];
@@ -77,22 +74,66 @@ function findEvent(id) {
                     db = _a.sent();
                     _a.label = 2;
                 case 2:
-                    _a.trys.push([2, 4, 5, 6]);
+                    _a.trys.push([2, 4, , 5]);
+                    collection = db.collection('events');
+                    return [4 /*yield*/, collection.insertMany(events)];
+                case 3:
+                    result = _a.sent();
+                    return [2 /*return*/, result];
+                case 4:
+                    err_2 = _a.sent();
+                    console.error("Error inserting the events: ".concat(err_2));
+                    throw err_2;
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.insertEvents = insertEvents;
+function findEvent(id) {
+    return __awaiter(this, void 0, void 0, function () {
+        var db, event, collection, err_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, connector_1.connectDb)()];
+                case 1:
+                    db = _a.sent();
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
                     collection = db.collection('events');
                     return [4 /*yield*/, collection.findOne({ UID: id })];
                 case 3:
                     event = _a.sent();
-                    return [3 /*break*/, 6];
-                case 4:
-                    err_2 = _a.sent();
-                    console.error("Error finding an event: ".concat(err_2));
-                    return [3 /*break*/, 6];
-                case 5:
-                    connector_1.client.close();
                     return [2 /*return*/, event];
-                case 6: return [2 /*return*/];
+                case 4:
+                    err_3 = _a.sent();
+                    console.error("Error finding an event: ".concat(err_3));
+                    throw err_3;
+                case 5: return [2 /*return*/];
             }
         });
     });
 }
 exports.findEvent = findEvent;
+function closeConnection() {
+    return __awaiter(this, void 0, void 0, function () {
+        var err_4;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, connector_1.client.close()];
+                case 1:
+                    _a.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_4 = _a.sent();
+                    console.error("Error closing the connection to the database: ".concat(err_4));
+                    throw err_4;
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.closeConnection = closeConnection;

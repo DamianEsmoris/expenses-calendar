@@ -36,33 +36,63 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findAnEvent = exports.insertAnEvent = void 0;
-var model_1 = require("./model");
+exports.findAnEvent = exports.insertManyEvents = exports.insertAnEvent = void 0;
+var db = require("./model");
 function insertAnEvent(event) {
     return __awaiter(this, void 0, void 0, function () {
         var result;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, model_1.insertEvent)(event)];
+                case 0: return [4 /*yield*/, db.insertEvent(event)];
                 case 1:
                     result = _a.sent();
+                    db.closeConnection();
                     return [2 /*return*/, result];
             }
         });
     });
 }
 exports.insertAnEvent = insertAnEvent;
+function insertManyEvents(events) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, db.insertEvents(events)];
+                case 1:
+                    result = _a.sent();
+                    db.closeConnection();
+                    return [2 /*return*/, result];
+            }
+        });
+    });
+}
+exports.insertManyEvents = insertManyEvents;
 function findAnEvent(id) {
     return __awaiter(this, void 0, void 0, function () {
         var event;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, model_1.findEvent)(id)];
+                case 0: return [4 /*yield*/, db.findEvent(id)];
                 case 1:
                     event = _a.sent();
+                    db.closeConnection();
                     return [2 /*return*/, event];
             }
         });
     });
 }
 exports.findAnEvent = findAnEvent;
+function closeDbConnection() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, db.closeConnection()];
+                case 1:
+                    _a.sent();
+                    db.closeConnection();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
