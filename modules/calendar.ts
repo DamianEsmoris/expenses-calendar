@@ -23,6 +23,11 @@ type VCALENDAR = {
 	VTIMEZONE: VTIMEZONE,
 }
 
+/**
+ * Creates the calendar object header
+ *
+ * @returns the header object
+ */
 function createCalendarHeader(): VCALENDAR { 
 	const tz = getTimezone();
 	const stdObj: STANDARD = {
@@ -51,6 +56,12 @@ function createCalendarHeader(): VCALENDAR {
 	return header;
 }
 
+/**
+ * Checks the calendar header
+ * 
+ * @param header object
+ * @returns all the checks in a object and the result
+ */
 function checkHeader(header: VCALENDAR) {
 	const checks = {
 		starts: Object.keys(header)[0] === "BEGIN" && header.BEGIN === "VCALENDAR",

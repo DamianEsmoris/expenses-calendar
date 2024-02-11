@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "moduleResolution": "Bundler",
-	"noEmit": true
+    "noEmit": true
  },
 }
 

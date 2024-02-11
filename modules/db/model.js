@@ -38,6 +38,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findEvent = exports.insertEvents = exports.insertEvent = exports.closeConnection = void 0;
 var connector_1 = require("./connector");
+/**
+ * Insets an event in the events collection.
+ *
+ * @param the event object
+ * @returns the object inserted
+ */
 function insertEvent(event) {
     return __awaiter(this, void 0, void 0, function () {
         var db, result, collection, err_1;
@@ -64,6 +70,12 @@ function insertEvent(event) {
     });
 }
 exports.insertEvent = insertEvent;
+/**
+ * Insert multiple events in the events collection.
+ *
+ * @param an events array
+ * @returns the result of the insert
+ */
 function insertEvents(events) {
     return __awaiter(this, void 0, void 0, function () {
         var db, result, collection, err_2;
@@ -90,6 +102,12 @@ function insertEvents(events) {
     });
 }
 exports.insertEvents = insertEvents;
+/**
+ * Finds an event by the UID.
+ *
+ * @param the event uid
+ * @returns if finds the event, the event or null if not
+ */
 function findEvent(id) {
     return __awaiter(this, void 0, void 0, function () {
         var db, event, collection, err_3;
@@ -116,6 +134,9 @@ function findEvent(id) {
     });
 }
 exports.findEvent = findEvent;
+/**
+ * Closes the db connection ( this is a method for avoid problems with the operation )
+ */
 function closeConnection() {
     return __awaiter(this, void 0, void 0, function () {
         var err_4;

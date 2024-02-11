@@ -42,6 +42,11 @@ var url = 'mongodb://localhost:27017';
 var client = new mongodb_1.MongoClient(url);
 exports.client = client;
 var dbName = 'expenses-calendar';
+/**
+ * Connects to the mongodb database.
+ *
+ * @returns a promise -> that resolves in the db connection.
+ */
 function connectDb() {
     var _this = this;
     return new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {

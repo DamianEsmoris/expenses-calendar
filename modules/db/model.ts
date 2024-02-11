@@ -1,6 +1,12 @@
 import { connectDb, client } from './connector';
 import { VEVENT } from '../event'
 
+/**
+ * Insets an event in the events collection.
+ *
+ * @param the event object
+ * @returns the object inserted
+ */
 async function insertEvent(event: VEVENT) {
 	const db: any = await connectDb()
 	let result;
@@ -15,6 +21,12 @@ async function insertEvent(event: VEVENT) {
 	}
 }
 
+/**
+ * Insert multiple events in the events collection.
+ *
+ * @param an events array
+ * @returns the result of the insert
+ */
 async function insertEvents(events: VEVENT[]) {
 	const db: any = await connectDb()
 	let result;
@@ -29,6 +41,12 @@ async function insertEvents(events: VEVENT[]) {
 	}
 }
 
+/**
+ * Finds an event by the UID.
+ *
+ * @param the event uid
+ * @returns if finds the event, the event or null if not
+ */
 async function findEvent(id: VEVENT['UID']) {
 	const db: any = await connectDb()
 	let event;
@@ -42,6 +60,9 @@ async function findEvent(id: VEVENT['UID']) {
 		throw err;
 	}}
 
+/**
+ * Closes the db connection ( this is a method for avoid problems with the operation )
+ */
 async function closeConnection(){
 		try {
 			await client.close();

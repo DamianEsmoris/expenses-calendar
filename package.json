@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc .\\index.ts && node ."
+    "start": "tsc index.ts && node ."
   },
   "keywords": [
     "expenses",
@@ -14,20 +14,14 @@
   "author": "damianesmoris",
   "license": "ISC",
   "dependencies": {
-    "fs-backwards-stream": "^1.0.0",
-    "fs-reverse": "^0.0.3",
-    "fstream": "^1.0.12",
     "mongodb": "^6.3.0",
-    "path": "^0.12.7",
-    "reverse-line-reader": "^0.2.6",
-    "reverse-read-line": "^0.2.0",
-    "through2": "^4.0.2",
-    "uuid": "^9.0.1"
+    "reverse-line-reader": "0.2.6"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
     "tsc": "^2.0.4",
     "tsx": "^4.7.0",
+    "typedoc": "^0.25.8",
     "typescript": "^5.3.3"
   }
 }

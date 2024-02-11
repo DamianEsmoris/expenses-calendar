@@ -3,7 +3,11 @@ const url = 'mongodb://localhost:27017';
 const client = new MongoClient(url);
 
 const dbName = 'expenses-calendar';
-
+/**
+ * Connects to the mongodb database.
+ *
+ * @returns a promise -> that resolves in the db connection.
+ */
 function connectDb() {
 	return new Promise(async (resolve) => {
 			let db;

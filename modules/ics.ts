@@ -1,14 +1,18 @@
 import * as fs from 'fs';
 import * as rlr from 'reverse-line-reader';
-
 import * as readline from 'readline';
 
 import { checkHeader, VCALENDAR} from './calendar';
 import { VEVENT } from './event';
-import { semicolonProps } from './parser';
-import { findAnEvent, insertAnEvent } from './db/controller'
+import { parseIcsEvent } from './parser';
+import { findAnEvent, insertManyEvents } from './db/controller'
 
-
+/**
+ * Reads the header of an .ics file
+ *
+ * @param path of the ics file
+ * @returns promise -> that resolves in a calendar object
+ */
 function readHeaderIcs(icsFile: string) {
 	return new Promise<VCALENDAR> ((resolve) => {
 		let objs: object[] = [{}], i = 0;
@@ -45,6 +49,13 @@ function readHeaderIcs(icsFile: string) {
 	})
 }
 
+
+/**
+ * Reads an .ics file
+ *
+ * @param path of the file
+ * @returns the file parsed to an object
+ */
 async function readIcs(icsFile: string) {
 	const header = await readHeaderIcs(icsFile);
 	const checks = checkHeader(header);
@@ -53,11 +64,10 @@ async function readIcs(icsFile: string) {
 			return false
 	}
 
-	console.log('All green!');
-
-	let buffer: string[] = [];
+	let lines: string[] = [];
 	let events: VEVENT[] = [];
 	let calendarCloseTagNotFound = true;
+	let callbackTimeout;
 
 	rlr.eachLine(icsFile, async (line: string) => {
 		if (calendarCloseTagNotFound){
@@ -67,43 +77,35 @@ async function readIcs(icsFile: string) {
 			}
 		}
 	
-		buffer.push(line);
-		const result = processBuffer(buffer);
+		lines.push(line);
+		const result = processIcsLine(lines);
 		if (typeof result === "object") {
-			buffer=[];
+			lines=[];
+			if(callbackTimeout) clearTimeout(callbackTimeout);
+			callbackTimeout = setTimeout(async() => insertManyEvents(events), 500);		
+
 			if (await findAnEvent(result.UID)) {
 				return;
 			} else {
 				events.push(result);
-				await insertAnEvent(result);
 			}
 		}
 	})
 
-	setTimeout(() => {
-	console.log(events);
-	}, 500);
-
-	// this is ugly but it works.
-	//		maybe i can use a function, or a callback after insert the last event (?
-	//
-	// the 
+	
 }
 
-function processBuffer(buffer: string[]): VEVENT | null | number{
-	if (buffer.at(-1) === "BEGIN:VEVENT") {
-		const event = parseEvent(buffer);
+/**
+ * Handles the processing of the ics file.
+ *
+ * @param the ics lines array
+ * @returns if is parsed the event, if not returns null.
+ */
+function processIcsLine(lines: string[]): VEVENT | null {
+	if (lines.at(-1) === "BEGIN:VEVENT") {
+		const event = parseIcsEvent(lines);
 		return event ? event : null;
 	}
-}
-
-function parseEvent(eventBuffer: string[]): VEVENT {
-    const event: Object = {};
-    for (const line of eventBuffer) {
-        const [key, value] = line.split(semicolonProps.find(prop => line.includes(prop)) ? ';' : ':');
-        event[key] = value;
-    }
-    return <VEVENT>event;
 }
 
 export {

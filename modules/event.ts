@@ -1,6 +1,5 @@
 import { VCALENDAR } from "./calendar";
 import { IcsDateFormat, formatDate } from "./date";
-import { parseRrule } from "./parser";
 
 class RruleError extends Error {
     constructor(message: string) {
@@ -35,6 +34,12 @@ type VEVENT = {
 	END: "VEVENT"
 }
 
+/**
+ *  Checks an RRULE property is valid
+ *  @param rrule object
+ *  @param the prop key
+ *  @param the value
+ */
 function RrulePropertyValidation(rrule: Rrule, key: string, value: unknown) : void{
 	if (key === "COUNT" && typeof value === "number") {
 		if (!/^(0|([1-9]\d*))$/.test(value+"")){
@@ -63,7 +68,12 @@ function RrulePropertyValidation(rrule: Rrule, key: string, value: unknown) : vo
 	}
 }
 
-
+/**
+ * Creates and validate the RRULE object from an object with the props.
+ * 
+ * @param rrule object
+ * @returns rrule object
+ */
 function createRrule(rrule: Rrule){
     if (!("FREQ" in rrule)) throw new RruleError("FREQ param must be present");
 		for (let [key, value] of Object.entries(rrule)){
@@ -78,6 +88,12 @@ function createRrule(rrule: Rrule){
 	return rrule;
 }
 
+/**
+ * Creates an event object.
+ *
+ * @param an object with the props: summary, description, startDate, endDate, rrule?, calendar
+ * @returns the event object
+ */
 function createEvent(e: {summary: string, description: string, startDate: Date, endDate: Date, rrule: Rrule, calendar: VCALENDAR}){
 	const tzid: string = e.calendar.VTIMEZONE.TZID;
 	const event: VEVENT = {

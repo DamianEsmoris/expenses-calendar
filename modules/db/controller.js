@@ -38,6 +38,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findAnEvent = exports.insertManyEvents = exports.insertAnEvent = void 0;
 var db = require("./model");
+/**
+ * Insets an event in the events collection.
+ *
+ * @param the event object
+ * @returns the object inserted
+ */
 function insertAnEvent(event) {
     return __awaiter(this, void 0, void 0, function () {
         var result;
@@ -53,12 +59,21 @@ function insertAnEvent(event) {
     });
 }
 exports.insertAnEvent = insertAnEvent;
+/**
+ * Insert multiple events in the events collection.
+ *
+ * @param an events array
+ * @returns the result of the insert
+ */
 function insertManyEvents(events) {
     return __awaiter(this, void 0, void 0, function () {
         var result;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, db.insertEvents(events)];
+                case 0:
+                    if (!events.length)
+                        return [2 /*return*/, null];
+                    return [4 /*yield*/, db.insertEvents(events)];
                 case 1:
                     result = _a.sent();
                     db.closeConnection();
@@ -68,6 +83,12 @@ function insertManyEvents(events) {
     });
 }
 exports.insertManyEvents = insertManyEvents;
+/**
+ * Finds an event by the UID.
+ *
+ * @param the event uid
+ * @returns if finds the event, the event or null if not
+ */
 function findAnEvent(id) {
     return __awaiter(this, void 0, void 0, function () {
         var event;
@@ -83,16 +104,3 @@ function findAnEvent(id) {
     });
 }
 exports.findAnEvent = findAnEvent;
-function closeDbConnection() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, db.closeConnection()];
-                case 1:
-                    _a.sent();
-                    db.closeConnection();
-                    return [2 /*return*/];
-            }
-        });
-    });
-}

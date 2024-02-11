@@ -60,15 +60,32 @@ function parseCalendar(header: VCALENDAR, body: VEVENT[]) {
  * Closes the calendar with the prop END:VCALENAR at the end of the string.
  *
  * @param calendar Calendar formatted in a string
- * @returns Calendar closed.
+ * @returns calendar closed
  */
 function closeCalendar(calendar: string) {
 	calendar+="END:VCALENDAR"
 	return calendar;
 }
 
+/**
+ * Parses an ics file event.
+ * 
+ * @param the lines of the event
+ * @returns the event object
+ */
+function parseIcsEvent(eventLines: string[]): VEVENT {
+    const event: Object = {};
+    for (const line of eventLines) {
+        const [key, value] = line.split(semicolonProps.find(prop => line.includes(prop)) ? ';' : ':');
+        event[key] = value;
+    }
+    return <VEVENT>event;
+}
+
+
 export { 
 	semicolonProps,
 	parseCalendar,
-	parseRrule
+	parseRrule,
+	parseIcsEvent,
 };
