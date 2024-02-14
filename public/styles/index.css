@@ -1,0 +1,8 @@
+#quickMenu {
+    transition: transform linear 150ms;
+    transform: translateX(0);
+}
+
+#quickMenu.hidden {
+    transform: translateX(-300px);
+}

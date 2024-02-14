@@ -13,7 +13,7 @@ import { findAnEvent, insertManyEvents } from './db/controller'
  * @param path of the ics file
  * @returns promise -> that resolves in a calendar object
  */
-function readHeaderIcs(icsFile: string) {
+function readIcsHeader(icsFile: string) {
 	return new Promise<VCALENDAR> ((resolve) => {
 		let objs: object[] = [{}], i = 0;
 
@@ -57,7 +57,7 @@ function readHeaderIcs(icsFile: string) {
  * @returns the file parsed to an object
  */
 async function readIcs(icsFile: string) {
-	const header = await readHeaderIcs(icsFile);
+	const header = await readIcsHeader(icsFile);
 	const checks = checkHeader(header);
 	if (!Object.values(checks).map((a,b) => a&&b)){
 			console.log(checks)
@@ -109,5 +109,6 @@ function processIcsLine(lines: string[]): VEVENT | null {
 }
 
 export {
+	readIcsHeader,
 	readIcs
 }
