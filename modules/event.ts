@@ -99,10 +99,10 @@ function createEvent(e: {summary: string, description: number, startDate: Date, 
 	const event: VEVENT = {
 		BEGIN: "VEVENT",
 		UID: crypto.randomUUID(),
-		DTSTAMP: `TZID=${tzid}:${formatDate(new Date())}`,
-		DTSTART: `TZID=${tzid}:${formatDate(e.startDate)}`,
+		DTSTAMP: new Date(),
+		DTSTART: e.startDate,
 		RRULE: null,
-		DTEND: `TZID=${tzid}:${formatDate(e.endDate)}`,
+		DTEND: e.endDate,
 		SUMMARY: e.summary, 
 		DESCRIPTION: e.description,
 		END: "VEVENT"
