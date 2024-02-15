@@ -1,45 +1,58 @@
-import * as db from './model';
+import { PrismaClient } from '@prisma/client'
 import { VEVENT } from '../event'
+import { formatDateSqlite } from '../date';
 
-/**
- * Insets an event in the events collection.
- *
- * @param the event object
- * @returns the object inserted
- */
-async function insertAnEvent(event: VEVENT) {
-	const result = await db.insertEvent(event);
-	db.closeConnection();
-	return result;
-}
 
-/**
- * Insert multiple events in the events collection.
- *
- * @param an events array
- * @returns the result of the insert
- */
-async function insertManyEvents(events: VEVENT[]) {
-	if (!events.length) return null;
-	const result = await db.insertEvents(events);
-	db.closeConnection();
-	return result;
-}
 
-/**
- * Finds an event by the UID.
- *
- * @param the event uid
- * @returns if finds the event, the event or null if not
- */
-async function findAnEvent(id: VEVENT['UID']) {
-	const event = await db.findEvent(id);
-	db.closeConnection();
-	return event;
+async function insertEvent(event: VEVENT) {
+    const prisma = new PrismaClient()
+    try {
+        const task = await prisma.event.create({
+            data: {
+                uid: event.UID,
+                dtstamp: formatDateSqlite(event.DTSTAMP),
+                dtstart: formatDateSqlite(event.DTSTART),
+                dtend: formatDateSqlite(event.DTSTART),
+                summary: event.SUMMARY,
+                description: event.DESCRIPTION,
+            },
+        })
+
+        await prisma.$disconnect();
+        return task;
+    } catch (e) {
+        console.error(e);
+        await prisma.$disconnect();
+        process.exit(1);
+    }
+ }
+
+ async function getEvents(date: Date) {
+    const userInputMonth = date.getMonth() + 1;
+    const monthSubstring = userInputMonth.toString().padStart(2, '0');
+    const prisma = new PrismaClient()
+    try {
+        const events = await prisma.event.findMany({
+            where: { 
+                dtstart: {
+                    contains: `${date.getFullYear()}-${monthSubstring}-`
+                },
+                dtend: {
+                    contains: `${date.getFullYear()}-${monthSubstring}-`
+                }
+             }
+        })
+
+        await prisma.$disconnect();
+        return events;
+    } catch (e) {
+        console.error(e);
+        await prisma.$disconnect();
+        process.exit(1);
+    }
 }
 
 export {
-	insertAnEvent,
-	insertManyEvents,
-	findAnEvent,
+    insertEvent,
+    getEvents
 }
