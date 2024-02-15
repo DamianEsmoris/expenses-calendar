@@ -4,6 +4,21 @@ import { Rrule, VEVENT } from "./event";
 const semicolonProps: readonly string[] = ["DTSTART", "DTEND"];
 
 /**
+ * Parses the Date object of the props: DTSTAMP, DTSTART, DTEND into a string to be stored.
+ *
+ * @param event Event object with the dates as object
+ * @param calendar Calendar of the event, to extract the TZID
+ */
+function parseDates(event: VEVENT, calendar: VCALENDAR) {
+	const tzid: string = calendar.VTIMEZONE.TZID;
+	for (let prop of ["DTSTAMP", "DTSTART", "DTEND"]){
+		if (typeof event[prop] != "object")
+			throw new Error(`Cannot parse the ${prop} of the event: ${event.SUMMARY}`);
+		event[prop] = `TZID=${tzid}:${formatDate(event[prop])}`;
+	}
+}
+
+/**
  * Parses a RRULE object into a string to be stored.
  *
  * @param rrule
@@ -50,6 +65,7 @@ function parseCalendar(header: VCALENDAR, body: VEVENT[]) {
 
 	str += parseLoop(header);
 	body.forEach(c => {
+		parseDates(c, header);
 		str += parseLoop(c);
 	});
 	

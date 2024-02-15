@@ -25,12 +25,12 @@ type Rrule = {
 type VEVENT = {
 	BEGIN: "VEVENT",
 	UID: ID,
-	DTSTAMP: DtDate,
-	DTSTART: 	DtDate,
+	DTSTAMP: Date | DtDate,
+	DTSTART: Date | DtDate,
 	RRULE: null | Rrule | string, 
-	DTEND: DtDate
+	DTEND: DtDate,
 	SUMMARY: string, 
-	DESCRIPTION: string,
+	DESCRIPTION: number,
 	END: "VEVENT"
 }
 
@@ -94,7 +94,7 @@ function createRrule(rrule: Rrule){
  * @param an object with the props: summary, description, startDate, endDate, rrule?, calendar
  * @returns the event object
  */
-function createEvent(e: {summary: string, description: string, startDate: Date, endDate: Date, rrule: Rrule, calendar: VCALENDAR}){
+function createEvent(e: {summary: string, description: number, startDate: Date, endDate: Date, rrule?: Rrule, calendar: VCALENDAR}){
 	const tzid: string = e.calendar.VTIMEZONE.TZID;
 	const event: VEVENT = {
 		BEGIN: "VEVENT",
