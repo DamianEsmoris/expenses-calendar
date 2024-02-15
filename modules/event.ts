@@ -28,7 +28,7 @@ type VEVENT = {
 	DTSTAMP: Date | DtDate,
 	DTSTART: Date | DtDate,
 	RRULE: null | Rrule | string, 
-	DTEND: DtDate,
+	DTEND: Date | DtDate,
 	SUMMARY: string, 
 	DESCRIPTION: number,
 	END: "VEVENT"
