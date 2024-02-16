@@ -94,8 +94,7 @@ function createRrule(rrule: Rrule){
  * @param an object with the props: summary, description, startDate, endDate, rrule?, calendar
  * @returns the event object
  */
-function createEvent(e: {summary: string, description: number, startDate: Date, endDate: Date, rrule?: Rrule, calendar: VCALENDAR}){
-	const tzid: string = e.calendar.VTIMEZONE.TZID;
+function createEvent(e: {summary: string, description: number, startDate: Date, endDate: Date, rrule?: Rrule}){
 	const event: VEVENT = {
 		BEGIN: "VEVENT",
 		UID: crypto.randomUUID(),

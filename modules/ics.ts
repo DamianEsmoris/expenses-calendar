@@ -5,7 +5,7 @@ import * as readline from 'readline';
 import { checkHeader, VCALENDAR} from './calendar';
 import { VEVENT } from './event';
 import { parseIcsEvent } from './parser';
-import { findAnEvent, insertManyEvents } from './db/controller'
+import { getEvent, insertManyEvents } from './db/controller'
 
 /**
  * Reads the header of an .ics file
@@ -84,7 +84,7 @@ async function readIcs(icsFile: string) {
 			if(callbackTimeout) clearTimeout(callbackTimeout);
 			callbackTimeout = setTimeout(async() => insertManyEvents(events), 500);		
 
-			if (await findAnEvent(result.UID)) {
+			if (await getEvent(result.UID)) {
 				return;
 			} else {
 				events.push(result);
