@@ -1,6 +1,6 @@
 node_modules/
 modules/*.js
-./index.js
+index.js
 .env
 *.ics
 prisma/dev.db
