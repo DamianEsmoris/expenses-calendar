@@ -36,7 +36,7 @@ async function insertEvent(event: VEVENT) {
  * @param events an array of event
  * @returns the events inserted
  */
-async function insertManyEvent(events: VEVENT[]) {
+async function insertManyEvents(events: VEVENT[]) {
     const prisma = new PrismaClient()
     try {
         const dbEvents = []
@@ -92,9 +92,35 @@ async function insertManyEvent(events: VEVENT[]) {
         process.exit(1);
     }
 }
+/**
+ * Find an event in the database by the uid
+ * @param uid event's uid
+ * @returns event from the database
+ */
+async function getEvent(euid: VEVENT["UID"]) {
+    const prisma = new PrismaClient()
+
+    try {
+        const events = await prisma.event.findFirst({
+            where: { 
+                uid: {
+                    contains: euid
+                }
+            }
+        })
+
+        await prisma.$disconnect();
+        return events;
+    } catch (e) {
+        console.error(e);
+        await prisma.$disconnect();
+        process.exit(1);
+    }
+}
 
 export {
     insertEvent,
-    insertManyEvent,
-    getEvents
+    insertManyEvents,
+    getEvent,
+    getEvents,
 }
