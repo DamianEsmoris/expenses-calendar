@@ -1,5 +1,5 @@
 node_modules/
 modules/*.js
-index.js
+./index.js
 .env
 output.ics
